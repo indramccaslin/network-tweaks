@@ -1,0 +1,6 @@
+id=network-tweaks
+name=Network Tweaks
+author=GANÉS
+version=v1.0.0
+versionCode=10000
+description=Optimize TCP/UDP network latency for gaming & streaming. DNS, MTU, QoS, congestion control, buffer tuning with WebUI. KernelSU/Magisk.

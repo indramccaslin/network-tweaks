@@ -1,0 +1,2 @@
+# Network Tweaks - daftar game (dikelola WebUI)
+# Satu nama paket per baris. Modul aktif saat app ini di foreground.
