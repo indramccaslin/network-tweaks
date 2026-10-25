@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Network Tweaks</title>
+  <style>
+    :root {
+      --bg: #05070d;
+      --card: linear-gradient(180deg, rgba(18, 24, 42, 0.98) 0%, rgba(10, 14, 26, 0.98) 100%);
+      --line: rgba(255, 255, 255, 0.07);
+      --text: #f8fafc;
+      --sub: #8b92b8;
+      --cyan: #22d3ee;
+      --blue: #4f9bff;
+      --violet: #7c5cff;
+      --ok: #34e3a4;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-variant-numeric: tabular-nums;
+      text-rendering: optimizeLegibility;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      color: var(--text);
+      font: 13px/1.6 "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      padding: 14px 12px 86px;
+      background: radial-gradient(1200px 700px at 110% -12%, rgba(34, 211, 238, 0.14), transparent 60%),
+        radial-gradient(1000px 650px at -18% 0%, rgba(79, 155, 255, 0.16), transparent 58%),
+        linear-gradient(180deg, #0a1022, var(--bg));
+      background-attachment: fixed;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -2;
+      background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.012) 1px, transparent 0);
+      background-size: 38px 38px;
+      mask-image: radial-gradient(circle at 50% 0%, #000 0%, transparent 74%);
+    }
+
+    .wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px 8px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: radial-gradient(200px 80px at 0% 50%, rgba(34, 211, 238, 0.18), transparent 70%),
+        linear-gradient(90deg, rgba(20, 28, 48, 0.98), rgba(10, 16, 30, 0.98));
+      box-shadow: 0 30px 60px -40px rgba(34, 211, 238, 0.6);
+    }
+
+    .logo-dot {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), transparent 55%),
+        linear-gradient(135deg, var(--blue), var(--cyan));
+    }
+
+    .logo-dot svg {
+      width: 20px;
+      height: 20px;
+      color: #fff;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .logo-title {
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .logo-sub {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.7em;
+      color: var(--sub);
+    }
+
+    .status-group {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      font-size: 11px;
+      color: var(--sub);
+    }
+
+    .status-pill.active {
+      border-color: transparent;
+      color: #fff;
+      background: linear-gradient(90deg, var(--blue), var(--cyan));
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--ok);
+      box-shadow: 0 0 0 4px rgba(52, 227, 164, 0.12);
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 4px rgba(52, 227, 164, 0.1);
+      }
+
+      50% {
+        box-shadow: 0 0 0 6px rgba(52, 227, 164, 0.16);
+      }
+    }
+
+    .card {
+      position: relative;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: var(--card);
+      box-shadow: 0 40px 70px -60px #000;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      top: -1px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.7), rgba(79, 155, 255, 0.6), transparent);
+    }
+
+    .card-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 14px 16px 16px;
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .card-head-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .head-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+    }
+
+    .head-icon svg {
+      width: 18px;
+      height: 18px;
+      color: #fff;
+    }
+
+    .head-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .head-title {
+      font-weight: 600;
+      letter-spacing: -0.2px;
+    }
+
+    .head-sub {
+      font-size: 11px;
+      color: var(--sub);
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    @media (max-width: 680px) {
+      .mode-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .status-group {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .topbar {
+        flex-wrap: wrap;
+      }
+    }
+
+    .mode-tile {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(24, 32, 52, 0.96) 0%, rgba(14, 20, 36, 0.98) 100%);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      overflow: hidden;
+    }
+
+    .mode-tile::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(160px 70px at 50% 0%, rgba(34, 211, 238, 0.16), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .mode-tile>* {
+      position: relative;
+      z-index: 1;
+    }
+
+    .mode-tile.active {
+      border-color: transparent;
+      box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.9);
+    }
+
+    .mode-tile.active::after {
+      opacity: 1;
+    }
+
+    .tile-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.24);
+    }
+
+    .mode-tile.active .tile-dot {
+      background: radial-gradient(circle, #fff, rgba(255, 255, 255, 0.6));
+      box-shadow: 0 0 0 6px rgba(34, 211, 238, 0.14);
+    }
+
+    .tile-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tile-name {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .tile-sub {
+      font-size: 11px;
+      color: var(--sub);
+    }
+
+    .mode-tile.active .tile-sub {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .mon-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    @media (max-width: 720px) {
+      .mon-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .mon-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .mon-item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(24, 32, 52, 0.96) 0%, rgba(14, 20, 36, 0.98) 100%);
+      overflow: hidden;
+    }
+
+    .mon-item::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(220px 90px at 50% 0%, rgba(34, 211, 238, 0.1), transparent 70%);
+      pointer-events: none;
+    }
+
+    .mon-item>* {
+      position: relative;
+      z-index: 1;
+    }
+
+    .mon-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mon-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.7em;
+      color: var(--sub);
+    }
+
+    .mon-val {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.4px;
+    }
+
+    .mon-sub {
+      font-size: 11px;
+      color: var(--sub);
+    }
+
+    .bar {
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(79, 155, 255, 0.9), rgba(34, 211, 238, 0.9));
+      box-shadow: 0 0 0 6px rgba(34, 211, 238, 0.08);
+      opacity: 0.8;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%) translateY(12px);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(8, 14, 26, 0.94);
+      backdrop-filter: blur(14px);
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.24s ease;
+      z-index: 40;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="logo-pill">
+        <div class="logo-dot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M5 12.55a11 11 0 0 1 14.08 0" />
+            <path d="M1.42 9a16 16 0 0 1 21.16 0" />
+            <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
+            <circle cx="12" cy="20" r="1" />
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">Network Tweaks</span>
+          <span class="logo-sub">Live Monitor</span>
+        </div>
+      </div>
+      <div class="status-group">
+        <div class="status-pill active" id="pillMode">
+          <span class="live-dot"></span>
+          <span>MODE: GLOBAL</span>
+        </div>
+        <div class="status-pill" id="pillCong">CONGESTION: -</div>
+        <div class="status-pill" id="pillQdisc">QDISC: -</div>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="card-inner">
+        <div class="card-head">
+          <div class="card-head-left">
+            <div class="head-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path
+                  d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09A1.65 1.65 0 0 0 9 4.6V4a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+              </svg>
+            </div>
+            <div class="head-text">
+              <span class="head-title">Profile Control</span>
+              <span class="head-sub">Tap untuk switch mode secara real-time</span>
+            </div>
+          </div>
+        </div>
+        <div class="mode-grid">
+          <button class="mode-tile" data-m="global" onclick="changeMode('global')">
+            <span class="tile-dot"></span>
+            <div class="tile-text">
+              <span class="tile-name">GLOBAL</span>
+              <span class="tile-sub">RESTORE</span>
+            </div>
+          </button>
+          <button class="mode-tile" data-m="gaming" onclick="changeMode('gaming')">
+            <span class="tile-dot"></span>
+            <div class="tile-text">
+              <span class="tile-name">GAMING</span>
+              <span class="tile-sub">LOW LATENCY</span>
+            </div>
+          </button>
+          <button class="mode-tile" data-m="streaming" onclick="changeMode('streaming')">
+            <span class="tile-dot"></span>
+            <div class="tile-text">
+              <span class="tile-name">STREAMING</span>
+              <span class="tile-sub">STABLE</span>
+            </div>
+          </button>
+          <button class="mode-tile" data-m="download" onclick="changeMode('download')">
+            <span class="tile-dot"></span>
+            <div class="tile-text">
+              <span class="tile-name">DOWNLOAD</span>
+              <span class="tile-sub">THROUGHPUT</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-inner">
+        <div class="card-head">
+          <div class="card-head-left">
+            <div class="head-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>
+            </div>
+            <div class="head-text">
+              <span class="head-title">Live Configuration</span>
+              <span class="head-sub">Menampilkan parameter aktif tiap mode</span>
+            </div>
+          </div>
+        </div>
+        <div class="mon-grid">
+          <article class="mon-item">
+            <div class="mon-top">
+              <span class="mon-label">MODE</span>
+            </div>
+            <span class="mon-val" id="mMode">-</span>
+            <span class="mon-sub" id="mModeDesc">-</span>
+            <div class="bar"></div>
+          </article>
+          <article class="mon-item">
+            <div class="mon-top">
+              <span class="mon-label">CONGESTION</span>
+            </div>
+            <span class="mon-val" id="mCong">-</span>
+            <span class="mon-sub">tcp_congestion_control</span>
+          </article>
+          <article class="mon-item">
+            <div class="mon-top">
+              <span class="mon-label">QDISC</span>
+            </div>
+            <span class="mon-val" id="mQdisc">-</span>
+            <span class="mon-sub">net.core.default_qdisc</span>
+          </article>
+          <article class="mon-item">
+            <div class="mon-top">
+              <span class="mon-label">AUTO CORK / SLOW START</span>
+            </div>
+            <span class="mon-val" id="mTcpFlags">-</span>
+            <span class="mon-sub">tcp_autocorking / tcp_slow_start_after_idle</span>
+          </article>
+          <article class="mon-item">
+            <div class="mon-top">
+              <span class="mon-label">NO METRICS</span>
+            </div>
+            <span class="mon-val" id="mMetrics">-</span>
+            <span class="mon-sub">tcp_no_metrics_save</span>
+          </article>
+          <article class="mon-item">
+            <div class="mon-top">
+              <span class="mon-label">TCP FAST OPEN</span>
+            </div>
+            <span class="mon-val" id="mTfo">-</span>
+            <span class="mon-sub">tcp_fastopen</span>
+          </article>
+          <article class="mon-item">
+            <div class="mon-top">
+              <span class="mon-label">RMEM / WMEM MAX</span>
+            </div>
+            <span class="mon-val" id="mBuf">-</span>
+            <span class="mon-sub">net.core.rmem_max / wmem_max</span>
+          </article>
+          <article class="mon-item">
+            <div class="mon-top">
+              <span class="mon-label">TCP RMEM / WMEM</span>
+            </div>
+            <span class="mon-val" id="mTcpBuf">-</span>
+            <span class="mon-sub">min | default | max</span>
+          </article>
+          <article class="mon-item">
+            <div class="mon-top">
+              <span class="mon-label">BACKLOG</span>
+            </div>
+            <span class="mon-val" id="mBacklog">-</span>
+            <span class="mon-sub">somaxconn / syn_backlog / netdev_max_backlog</span>
+          </article>
+          <article class="mon-item">
+            <div class="mon-top">
+              <span class="mon-label">NOTSENT LOWAT</span>
+            </div>
+            <span class="mon-val" id="mNotSent">-</span>
+            <span class="mon-sub">tcp_notsent_lowat (bytes)</span>
+          </article>
+          <article class="mon-item">
+            <div class="mon-top">
+              <span class="mon-label">BUSY POLL / READ</span>
+            </div>
+            <span class="mon-val" id="mBusy">-</span>
+            <span class="mon-sub">net.core.busy_poll / busy_read</span>
+          </article>
+          <article class="mon-item">
+            <div class="mon-top">
+              <span class="mon-label">STATUS</span>
+            </div>
+            <span class="mon-val" id="mStatus">MENUNGGU</span>
+            <span class="mon-sub">Service Monitor</span>
+          </article>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast"><span>Berhasil</span></div>
+
+  <script>
+    var MODDIR = "/data/adb/modules/network-tweaks";
+    var current = "global";
+
+    var DESC = {
+      global: "Restore ke nilai asli kernel",
+      gaming: "BBR • Low latency • Auto-detect game",
+      streaming: "fq_codel • Stabil & smooth playback",
+      download: "CUBIC • Buffer besar • Max throughput"
+    };
+
+    function hasKsu() { return typeof ksu !== "undefined" && ksu; }
+    function sh(cmd) {
+      return new Promise(function (res) {
+        try {
+          if (hasKsu()) { var r = ksu.exec(cmd); res(r == null ? "" : String(r)); return; }
+        } catch (e) { }
+        res("");
+      });
+    }
+    function showToast(m) {
+      var el = document.getElementById("toast");
+      el.querySelector("span").textContent = m;
+      el.classList.add("show");
+      setTimeout(function () { el.classList.remove("show"); }, 1400);
+    }
+    function setText(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; }
+    function fmtBytes(v) {
+      var n = parseInt(v);
+      if (isNaN(n)) return v;
+      var mb = n / 1024 / 1024;
+      if (mb >= 1) return (Math.round(mb * 10) / 10) + "MB";
+      var kb = n / 1024;
+      if (kb >= 1) return Math.round(kb) + "KB";
+      return n + "B";
+    }
+
+    async function loadMonitor(m) {
+      try {
+        var cfg = await sh("cat '" + MODDIR + "/tweak.conf' 2>/dev/null");
+        var lines = cfg.replace(/\r/g, "\n").split("\n");
+        function get(p) { for (var i = 0; i < lines.length; i++) { var l = lines[i].trim(); if (l.indexOf(p + "=") === 0) return l.substring(p.length + 1); } return ""; }
+        function pick(prefix, key, fallback) { var v = get(prefix + "_" + key); if (v === "") v = get(key); if (v === "") v = fallback; return v; }
+
+        if (m === "global") {
+          setText("mMode", "GLOBAL");
+          setText("mModeDesc", DESC.global);
+          setText("mCong", "RESTORED");
+          setText("mQdisc", "RESTORED");
+          setText("mTcpFlags", "RESTORED / RESTORED");
+          setText("mMetrics", "RESTORED");
+          setText("mTfo", "RESTORED");
+          setText("mBuf", "RESTORED");
+          setText("mTcpBuf", "RESTORED");
+          setText("mBacklog", "RESTORED");
+          setText("mNotSent", "RESTORED");
+          setText("mBusy", "RESTORED / RESTORED");
+          setText("mStatus", "RESTORED");
+          return;
+        }
+
+        var p = m.toUpperCase();
+        var cong = pick(p, "TCP_CONG_ALGO", "bbr");
+        var qd = pick(p, "NET_CORE_DEFAULT_QDISC", "fq");
+        var ac = pick(p, "TCP_AUTOCORKING", "0");
+        var ssai = pick(p, "TCP_SLOW_START_AFTER_IDLE", "0");
+        var nms = pick(p, "TCP_NO_METRICS_SAVE", "1");
+        var tfo = pick(p, "TCP_FASTOPEN", "3");
+        var rmax = pick(p, "NET_RMEM_MAX", "33554432");
+        var wmax = pick(p, "NET_WMEM_MAX", "33554432");
+        var trmem = pick(p, "TCP_RMEM", "4096 87380 33554432");
+        var twmem = pick(p, "TCP_WMEM", "4096 65536 33554432");
+        var somax = pick(p, "NET_SOMAXCONN", "4096");
+        var syn = pick(p, "NET_TCP_MAX_SYN_BACKLOG", "4096");
+        var ndbl = pick(p, "NET_CORE_NETDEV_MAX_BACKLOG", "10000");
+        var ns = pick(p, "NET_NOTSENT_LOWAT", "16384");
+        var bp = pick(p, "NET_CORE_BUSY_POLL", "50");
+        var br = pick(p, "NET_CORE_BUSY_READ", "50");
+
+        setText("mMode", m.toUpperCase());
+        setText("mModeDesc", DESC[m]);
+        setText("mCong", cong.toUpperCase());
+        setText("mQdisc", qd);
+        setText("mTcpFlags", (ac === "0" ? "OFF" : "ON") + " / " + (ssai === "0" ? "OFF" : "ON"));
+        setText("mMetrics", nms === "1" ? "ON" : "OFF");
+        setText("mTfo", tfo);
+        setText("mBuf", fmtBytes(rmax) + " / " + fmtBytes(wmax));
+        setText("mTcpBuf", trmem + " | " + twmem);
+        setText("mBacklog", somax + " / " + syn + " / " + ndbl);
+        setText("mNotSent", ns + " B");
+        setText("mBusy", bp + " / " + br);
+        setText("mStatus", "ACTIVE");
+      } catch (e) {
+        setText("mStatus", "ERR");
+      }
+    }
+
+    function updateUI(m) {
+      current = m;
+      var tiles = document.querySelectorAll(".mode-tile");
+      for (var i = 0; i < tiles.length; i++) { tiles[i].classList.toggle("active", tiles[i].getAttribute("data-m") === m); }
+      var pill = document.getElementById("pillMode");
+      pill.innerHTML = '<span class="live-dot"></span><span>MODE: ' + m.toUpperCase() + '</span>';
+      loadMonitor(m);
+    }
+
+    async function changeMode(m) {
+      if (m === current) return;
+      updateUI(m);
+      if (hasKsu()) {
+        try {
+          ksu.exec("sed -i 's/^MODE=.*/MODE=" + m + "/' '" + MODDIR + "/tweak.conf'");
+          ksu.exec("touch '" + MODDIR + "/.reload'");
+        } catch (e) { }
+        showToast("MODE " + m.toUpperCase() + " APPLIED");
+        setTimeout(function () { loadMonitor(m); }, 700);
+        return;
+      }
+      showToast("OPEN VIA KERNELSU");
+    }
+
+    async function boot() {
+      try {
+        if (hasKsu() && ksu.moduleInfo) {
+          var inf = JSON.parse(ksu.moduleInfo());
+          if (inf && inf.moduleDir) MODDIR = inf.moduleDir;
+        }
+        var cfg = await sh("grep '^MODE=' '" + MODDIR + "/tweak.conf' 2>/dev/null");
+        var m = cfg.replace(/\r/g, "").split("=")[1] || "global";
+        if (["global", "gaming", "streaming", "download"].indexOf(m) < 0) m = "global";
+        updateUI(m);
+        var c = await sh("cat /proc/sys/net/ipv4/tcp_congestion_control 2>/dev/null");
+        var q = await sh("cat /proc/sys/net/core/default_qdisc 2>/dev/null");
+        if (c.trim()) document.getElementById("pillCong").textContent = "CONGESTION: " + c.trim().toUpperCase();
+        if (q.trim()) document.getElementById("pillQdisc").textContent = "QDISC: " + q.trim();
+      } catch (e) { }
+    }
+
+    boot();
+    setInterval(function () { loadMonitor(current); }, 4000);
+  </script>
+</body>
+
+</html>
